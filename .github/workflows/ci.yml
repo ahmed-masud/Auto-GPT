@@ -72,6 +72,18 @@ jobs:
       - name: Run unittest tests with coverage
         run: |
           pytest --cov=autogpt --cov-report term-missing --cov-branch --cov-report xml --cov-report term
+        env:
+          CI: true
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "github-actions-bot@users.noreply.github.com"
+          git switch "${{ github.ref }}"
+          git add -A
+          git commit -m "Update cassettes" || echo "No changes to commit"
+          git push
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
